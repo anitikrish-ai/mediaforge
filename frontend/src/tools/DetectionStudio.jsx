@@ -4,7 +4,7 @@ import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
 import ProgressBar from "../components/ProgressBar";
 import SegmentedField from "../components/SegmentedField";
-import { postForm, waitForJob } from "../api";
+import { apiUrl, postForm, waitForJob } from "../api";
 
 const IMAGE_MODES = ["people", "face", "eye"];
 const VIDEO_MODES = ["motion", "people", "face"];
@@ -79,7 +79,7 @@ export default function DetectionStudio() {
                 <figure>
                   <figcaption>Annotated ({result?.count ?? 0} found)</figcaption>
                   {result?.image_url ? (
-                    <img src={result.image_url} alt="annotated" />
+                    <img src={apiUrl(result.image_url)} alt="annotated" />
                   ) : (
                     <div className="preview-empty">Run to preview</div>
                   )}
@@ -94,7 +94,7 @@ export default function DetectionStudio() {
                 <figure>
                   <figcaption>Tracked{result ? ` — ${result.unique_tracks} unique tracks` : ""}</figcaption>
                   {result?.download_url ? (
-                    <video src={result.download_url} controls />
+                    <video src={apiUrl(result.download_url)} controls />
                   ) : (
                     <div className="preview-empty">Run to process</div>
                   )}
@@ -109,7 +109,7 @@ export default function DetectionStudio() {
                 Change file
               </GlassButton>
               {result?.download_url && (
-                <a className="glass-link-btn" href={result.download_url} download>
+                <a className="glass-link-btn" href={apiUrl(result.download_url)} download>
                   Download video
                 </a>
               )}

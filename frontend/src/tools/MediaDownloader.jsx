@@ -3,7 +3,7 @@ import { GlassButton, GlassInput } from "@zakisheriff/liquid-glass";
 import Panel from "../components/Panel";
 import ProgressBar from "../components/ProgressBar";
 import SegmentedField from "../components/SegmentedField";
-import { postForm, waitForJob } from "../api";
+import { apiUrl, postForm, waitForJob } from "../api";
 
 /** Video/audio downloading with format & quality selection via yt-dlp. */
 export default function MediaDownloader() {
@@ -127,7 +127,7 @@ export default function MediaDownloader() {
         </GlassButton>
 
         {result?.download_url && (
-          <a className="glass-link-btn" href={result.download_url} download>
+          <a className="glass-link-btn" href={apiUrl(result.download_url)} download>
             Save {result.title ? `"${result.title}"` : "file"}
           </a>
         )}

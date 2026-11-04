@@ -4,7 +4,7 @@ import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
 import ProgressBar from "../components/ProgressBar";
 import SegmentedField from "../components/SegmentedField";
-import { postForm, waitForJob } from "../api";
+import { apiUrl, postForm, waitForJob } from "../api";
 
 /** Video processing: probe, trim, resize, and frame extraction — all OpenCV-backed. */
 export default function VideoStudio() {
@@ -88,12 +88,12 @@ export default function VideoStudio() {
             {busy && progress && <ProgressBar progress={progress.progress} message={progress.message} />}
 
             {result && op !== "extract" && result.download_url && (
-              <video src={result.download_url} controls className="result-video" />
+              <video src={apiUrl(result.download_url)} controls className="result-video" />
             )}
             {result && op === "extract" && (
               <div className="frame-grid">
                 {result.frame_urls.map((u) => (
-                  <img key={u} src={u} alt="frame" />
+                  <img key={u} src={apiUrl(u)} alt="frame" />
                 ))}
               </div>
             )}
@@ -103,7 +103,7 @@ export default function VideoStudio() {
                 Change file
               </GlassButton>
               {result?.download_url && (
-                <a className="glass-link-btn" href={result.download_url} download>
+                <a className="glass-link-btn" href={apiUrl(result.download_url)} download>
                   Download
                 </a>
               )}

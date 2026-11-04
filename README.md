@@ -53,7 +53,7 @@ frontend/
 
 ## Setup
 
-### Backend
+### Backend (local)
 
 ```bash
 cd backend
@@ -66,6 +66,9 @@ Verify: `curl http://localhost:8000/api/libraries` should report `"ok"` for all 
 libraries. `rembg`'s first run per model downloads ONNX weights (a few MB to ~150MB
 depending on model) to `~/.u2net/` — one-time, fully local after that, no account needed.
 
+For a real deployment (not local), see **Deployment** below — the backend runs as a
+container, not a plain `uvicorn` process on bare metal.
+
 ### Frontend
 
 ```bash
@@ -77,6 +80,41 @@ npm run build && npm run preview   # production build
 ```
 
 Open `http://localhost:5173`.
+
+## Deployment
+
+The backend is a real CV/ML workload (OpenCV, scikit-image, ONNX inference via rembg,
+and `yt-dlp` shelling out to `ffmpeg`). That doesn't fit a serverless platform like
+Vercel: its Python functions cap out at 500MB bundled — this backend's dependencies
+alone run closer to 900MB — and there's no `ffmpeg` binary available in that runtime
+anyway. So the two halves deploy separately:
+
+- **Frontend → Vercel.** Static Vite build, `vercel.json` at the repo root points
+  Vercel at `frontend/`. Nothing else needed.
+- **Backend → a container host.** Anywhere that builds from `backend/Dockerfile` and
+  has no 500MB-style cap works: Railway, Render, Fly.io, Cloud Run, a plain VPS. The
+  Dockerfile installs `ffmpeg` + OpenCV's runtime libs and respects `$PORT`.
+
+Wire them together with one env var:
+
+1. Deploy `backend/` to your container host of choice. Note the public URL it gives
+   you (e.g. `https://mediaforge-backend.up.railway.app`).
+2. In the Vercel project's **Settings → Environment Variables**, add
+   `VITE_API_BASE` = that URL (no trailing slash), for the Production (and Preview,
+   if you want previews to work too) environment.
+3. Redeploy the frontend on Vercel. `VITE_API_BASE` is read at **build time** by Vite
+   (`import.meta.env.VITE_API_BASE` in `src/api.js`) and gets baked into the static
+   bundle — every API call and every backend-served file link (`apiUrl()` in
+   `src/api.js`) resolves against it instead of a relative path.
+
+Left unset, `VITE_API_BASE` falls back to `""` (relative paths), which is what local
+`vite dev` wants — that's why `vite.config.js` still proxies `/api` and `/outputs` to
+`127.0.0.1:8000` for local-only convenience; it's irrelevant once `VITE_API_BASE` is
+set for a real deployment.
+
+The backend's CORS is already open (`allow_origins=["*"]` in `app/core/config.py`),
+so it accepts requests from the Vercel domain with no further change. Tighten that to
+your actual frontend origin once both are live, if you want.
 
 ### Configuration
 

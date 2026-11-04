@@ -1,0 +1,7 @@
+storage/tmp/*
+storage/outputs/*
+storage/uploads/*
+__pycache__/
+*.pyc
+.venv/
+*.log

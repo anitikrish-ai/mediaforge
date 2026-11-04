@@ -1,8 +1,26 @@
 // Thin fetch wrapper for the MediaForge API. Every tool panel goes through
 // this module so error handling and job-polling stay consistent.
+//
+// The backend is a separate deployment (see README — it doesn't fit Vercel's
+// serverless function size limit, so it's hosted elsewhere, e.g. Railway).
+// VITE_API_BASE is a build-time env var pointing at that backend's public
+// origin, e.g. "https://mediaforge-backend.up.railway.app" (no trailing
+// slash). Left unset, it falls back to same-origin relative paths, which is
+// what the local `vite dev` proxy expects.
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+
+/** Prefix any backend-relative path (including one returned inside a JSON
+ * response, e.g. result.download_url) with the backend's origin. Every <img>,
+ * <video>, and <a href> that points at a backend-served file must go through
+ * this — only requests made via postForm/getJSON below are prefixed for you. */
+export function apiUrl(path) {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path; // already absolute (e.g. yt-dlp thumbnail)
+  return `${API_BASE}${path}`;
+}
 
 async function request(path, options = {}) {
-  const res = await fetch(path, options);
+  const res = await fetch(apiUrl(path), options);
   if (!res.ok) {
     let detail = res.statusText;
     try {

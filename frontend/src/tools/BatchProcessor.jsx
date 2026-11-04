@@ -4,7 +4,7 @@ import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
 import ProgressBar from "../components/ProgressBar";
 import SegmentedField from "../components/SegmentedField";
-import { postForm, waitForJob } from "../api";
+import { apiUrl, postForm, waitForJob } from "../api";
 
 const PRESETS = {
   grayscale: [{ type: "filter", name: "grayscale" }],
@@ -93,7 +93,7 @@ export default function BatchProcessor() {
                 <li key={i} className={f.ok ? "ok" : "fail"}>
                   <span>{f.filename}</span>
                   {f.ok ? (
-                    <a href={`${downloadBase}/${result.dir.split("/").pop()}/download/${f.output}`} download>
+                    <a href={apiUrl(`${downloadBase}/${result.dir.split("/").pop()}/download/${f.output}`)} download>
                       Download
                     </a>
                   ) : (
