@@ -3,7 +3,7 @@ import { GlassButton, GlassSwitch } from "@zakisheriff/liquid-glass";
 import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
 import ProgressBar from "../components/ProgressBar";
-import SegmentedField from "../components/SegmentedField";
+import PillField from "../components/PillField";
 import { apiUrl, postForm, waitForJob } from "../api";
 
 const IMAGE_MODES = ["people", "face", "eye"];
@@ -120,7 +120,7 @@ export default function DetectionStudio() {
           <div className="studio-controls">
             <label className="field">
               <span>Detection mode</span>
-              <SegmentedField options={modes} value={mode} onChange={setMode} />
+              <PillField options={modes} value={mode} onChange={setMode} />
             </label>
             {kind === "video" && (
               <label className="field toggle-field">

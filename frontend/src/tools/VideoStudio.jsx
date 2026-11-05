@@ -3,7 +3,7 @@ import { GlassButton, GlassSlider } from "@zakisheriff/liquid-glass";
 import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
 import ProgressBar from "../components/ProgressBar";
-import SegmentedField from "../components/SegmentedField";
+import PillField from "../components/PillField";
 import { apiUrl, postForm, waitForJob } from "../api";
 
 /** Video processing: probe, trim, resize, and frame extraction — all OpenCV-backed. */
@@ -93,7 +93,7 @@ export default function VideoStudio() {
             {result && op === "extract" && (
               <div className="frame-grid">
                 {result.frame_urls.map((u) => (
-                  <img key={u} src={apiUrl(u)} alt="frame" />
+                  <img key={u} src={apiUrl(u)} alt="frame" loading="lazy" decoding="async" />
                 ))}
               </div>
             )}
@@ -114,7 +114,7 @@ export default function VideoStudio() {
           <div className="studio-controls">
             <label className="field">
               <span>Operation</span>
-              <SegmentedField options={["trim", "resize", "extract"]} value={op} onChange={setOp} />
+              <PillField options={["trim", "resize", "extract"]} value={op} onChange={setOp} />
             </label>
 
             {op === "trim" && (

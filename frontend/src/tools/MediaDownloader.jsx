@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GlassButton, GlassInput } from "@zakisheriff/liquid-glass";
 import Panel from "../components/Panel";
 import ProgressBar from "../components/ProgressBar";
-import SegmentedField from "../components/SegmentedField";
+import PillField from "../components/PillField";
 import { apiUrl, postForm, waitForJob } from "../api";
 
 /** Video/audio downloading with format & quality selection via yt-dlp. */
@@ -82,7 +82,9 @@ export default function MediaDownloader() {
 
       {probeInfo && (
         <div className="probe-result">
-          {probeInfo.thumbnail && <img className="thumb" src={probeInfo.thumbnail} alt="" />}
+          {probeInfo.thumbnail && (
+            <img className="thumb" src={probeInfo.thumbnail} alt="" loading="lazy" decoding="async" />
+          )}
           <div>
             <strong>{probeInfo.title}</strong>
             <div className="meta-row">
@@ -95,7 +97,7 @@ export default function MediaDownloader() {
       <div className="studio-controls">
         <label className="field">
           <span>Mode</span>
-          <SegmentedField options={["video", "audio"]} value={mode} onChange={setMode} />
+          <PillField options={["video", "audio"]} value={mode} onChange={setMode} />
         </label>
         {mode === "video" ? (
           <label className="field">
@@ -116,7 +118,7 @@ export default function MediaDownloader() {
         ) : (
           <label className="field">
             <span>Audio format</span>
-            <SegmentedField options={["mp3", "m4a", "wav", "opus"]} value={audioFormat} onChange={setAudioFormat} />
+            <PillField options={["mp3", "m4a", "wav", "opus"]} value={audioFormat} onChange={setAudioFormat} />
           </label>
         )}
 

@@ -1,0 +1,6 @@
+
+> mediaforge-frontend@1.0.0 preview
+> vite preview --port 5173 --host
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.0.2.2:5173/

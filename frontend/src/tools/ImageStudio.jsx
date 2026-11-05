@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { GlassButton, GlassSlider, GlassSwitch } from "@zakisheriff/liquid-glass";
 import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
-import SegmentedField from "../components/SegmentedField";
+import PillField from "../components/PillField";
 import { postForm } from "../api";
 
 const FILTERS = ["none", "grayscale", "blur", "edge", "sepia", "sketch", "emboss"];
@@ -103,7 +103,7 @@ export default function ImageStudio() {
             </label>
             <label className="field">
               <span>Resize mode</span>
-              <SegmentedField options={["fit", "fill", "stretch"]} value={resizeMode} onChange={setResizeMode} />
+              <PillField options={["fit", "fill", "stretch"]} value={resizeMode} onChange={setResizeMode} />
             </label>
             <label className="field">
               <span>Rotate (°)</span>
@@ -132,11 +132,11 @@ export default function ImageStudio() {
             </label>
             <label className="field">
               <span>Filter</span>
-              <SegmentedField options={FILTERS} value={filter} onChange={setFilter} />
+              <PillField options={FILTERS} value={filter} onChange={setFilter} />
             </label>
             <label className="field">
               <span>Output format</span>
-              <SegmentedField options={FORMATS} value={format} onChange={setFormat} />
+              <PillField options={FORMATS} value={format} onChange={setFormat} />
             </label>
 
             <GlassButton variant="filled" onClick={run} disabled={busy}>

@@ -3,7 +3,7 @@ import { GlassButton } from "@zakisheriff/liquid-glass";
 import Panel from "../components/Panel";
 import Dropzone from "../components/Dropzone";
 import ProgressBar from "../components/ProgressBar";
-import SegmentedField from "../components/SegmentedField";
+import PillField from "../components/PillField";
 import { apiUrl, postForm, waitForJob } from "../api";
 
 const PRESETS = {
@@ -67,7 +67,7 @@ export default function BatchProcessor() {
           <div className="meta-row">{files.length} file(s) selected</div>
           <label className="field">
             <span>Operation preset</span>
-            <SegmentedField
+            <PillField
               options={Object.keys(PRESETS)}
               value={preset}
               onChange={setPreset}

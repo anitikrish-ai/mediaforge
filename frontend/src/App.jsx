@@ -1,21 +1,26 @@
-import { useEffect, useState } from "react";
-import ImageStudio from "./tools/ImageStudio";
-import BackgroundRemover from "./tools/BackgroundRemover";
-import DetectionStudio from "./tools/DetectionStudio";
-import VideoStudio from "./tools/VideoStudio";
-import WebExtractor from "./tools/WebExtractor";
-import MediaDownloader from "./tools/MediaDownloader";
-import BatchProcessor from "./tools/BatchProcessor";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { getJSON } from "./api";
 
+// Each tool panel is its own chunk — only the active tool's code (and its
+// slice of the liquid-glass library) downloads on first paint; switching
+// tabs fetches the next chunk on demand instead of shipping all seven
+// upfront.
+const ImageStudio = lazy(() => import("./tools/ImageStudio"));
+const BackgroundRemover = lazy(() => import("./tools/BackgroundRemover"));
+const DetectionStudio = lazy(() => import("./tools/DetectionStudio"));
+const VideoStudio = lazy(() => import("./tools/VideoStudio"));
+const MediaDownloader = lazy(() => import("./tools/MediaDownloader"));
+const BatchProcessor = lazy(() => import("./tools/BatchProcessor"));
+const WebExtractor = lazy(() => import("./tools/WebExtractor"));
+
 const TOOLS = [
-  { id: "image", label: "Image Studio", icon: "🖼️", component: ImageStudio },
-  { id: "bg", label: "Background Remover", icon: "✂️", component: BackgroundRemover },
+  { id: "image", label: "Image Studio", icon: "🖼", component: ImageStudio },
+  { id: "bg", label: "Background Remover", icon: "✂", component: BackgroundRemover },
   { id: "detect", label: "Detection & Tracking", icon: "🎯", component: DetectionStudio },
   { id: "video", label: "Video Studio", icon: "🎬", component: VideoStudio },
   { id: "batch", label: "Batch Processor", icon: "📦", component: BatchProcessor },
   { id: "web", label: "Web Extractor", icon: "📰", component: WebExtractor },
-  { id: "download", label: "Media Downloader", icon: "⬇️", component: MediaDownloader },
+  { id: "download", label: "Media Downloader", icon: "⬇", component: MediaDownloader },
 ];
 
 export default function App() {
@@ -32,7 +37,7 @@ export default function App() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand__mark">◆</span>
+          <span className="brand__mark">M</span>
           <span className="brand__name">MediaForge</span>
         </div>
         <nav className="nav">
@@ -53,8 +58,23 @@ export default function App() {
       </aside>
 
       <main className="main">
-        <ActiveTool />
+        <Suspense fallback={<div className="tool-loading">Loading tool…</div>}>
+          <ActiveTool />
+        </Suspense>
       </main>
+
+      <nav className="bottom-nav" aria-label="Tools">
+        {TOOLS.map((t) => (
+          <button
+            key={t.id}
+            className={`bottom-nav__item ${active === t.id ? "bottom-nav__item--active" : ""}`}
+            onClick={() => setActive(t.id)}
+          >
+            <span className="bottom-nav__icon">{t.icon}</span>
+            <span>{t.label.split(" ")[0]}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
